@@ -45,6 +45,7 @@ if np.sum(initial < 0) != 1:
 ## State space search algorithm
 # Initial conditions for search
 border = []
+visited = []
 state = initial
 history = []
 # Build the actions array
@@ -77,14 +78,15 @@ while not (state == final).all():
 				state_buffer[tuple(current_gap_index)] = change_element
 				#Avoids identical states
 				found_identical = False
-				for k in range(len(border)):
-					if (border[k][0] == state_buffer).all():
+				for k in range(len(visited)):
+					if (visited[k] == state_buffer).all():
 						found_identical = True
 						break
 				if not found_identical:
-					# Insert the state to border
+					# Insert the state to border and visited
 					history_buffer.append(actions[i,:])
 					border.append((state_buffer, history_buffer))
+					visited.append(state_buffer)
 				break
 	# Next state
 	the_next = border.pop(0)
@@ -92,7 +94,7 @@ while not (state == final).all():
 	history = the_next[1]
 	if len(history) > n_movement:
 		n_movement = len(history)
-		print "Movements counter: " + str(n_movement)
+		print "Movements counter: " + str(n_movement) + " - Queue size: " + str(len(border))
 #Prints the solution
 print "Solution:"
 for i in range(len(history)):
