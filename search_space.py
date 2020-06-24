@@ -5,6 +5,7 @@ import numpy as np
 ## User definitions
 # Important: the negative number will be the gap
 initial = np.array([[1, 2, 4], [3, 5, 6], [-1, 7, 0]])
+#initial = np.array([[-1, 0, 1], [3, 4, 2], [6, 7, 5]])
 final = np.array([[0, 1, 2], [3, 4, 5], [6, 7, -1]])
 
 ## Initial check
@@ -74,12 +75,19 @@ while not (state == final).all():
 				change_element = state_buffer[tuple(desired_gap_index)]
 				state_buffer[tuple(desired_gap_index)] = state_buffer[tuple(current_gap_index)]
 				state_buffer[tuple(current_gap_index)] = change_element
-				# Insert the state to border
-				history_buffer.append(actions[i,:])
-				border.append((state_buffer, history_buffer))
-				if len(history_buffer) > n_movement:
-					n_movement = len(history_buffer)
-					print "Moviments number: " + str(n_movement)
+				#Avoids identical states
+				found_identical = False
+				for k in range(len(border)):
+					if (border[k][0] == state_buffer).all():
+						found_identical = True
+						break
+				if not found_identical:
+					# Insert the state to border
+					history_buffer.append(actions[i,:])
+					border.append((state_buffer, history_buffer))
+					if len(history_buffer) > n_movement:
+						n_movement = len(history_buffer)
+						print "Moviments number: " + str(n_movement)
 				break
 	# Next state
 	the_next = border.pop(0)
