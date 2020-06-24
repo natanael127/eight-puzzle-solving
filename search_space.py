@@ -85,14 +85,14 @@ while not (state == final).all():
 					# Insert the state to border
 					history_buffer.append(actions[i,:])
 					border.append((state_buffer, history_buffer))
-					if len(history_buffer) > n_movement:
-						n_movement = len(history_buffer)
-						print "Movements counter: " + str(n_movement)
 				break
 	# Next state
 	the_next = border.pop(0)
 	state = the_next[0]
 	history = the_next[1]
+	if len(history) > n_movement:
+		n_movement = len(history)
+		print "Movements counter: " + str(n_movement)
 #Prints the solution
 print "Solution:"
 for i in range(len(history)):
