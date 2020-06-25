@@ -3,10 +3,11 @@ import copy
 import numpy as np
 
 ## User definitions
-# Important: the negative number will be the gap
-initial = np.array([[1, 2, 4], [3, 5, 6], [-1, 7, 0]])
+# Important: the zero will be the gap
+# Numbers must be from 0 to n_elements-1
+initial = np.array([[1, 2, 4], [3, 5, 6], [8, 7, 0]])
 #initial = np.array([[-1, 0, 1], [3, 4, 2], [6, 7, 5]])
-final = np.array([[0, 1, 2], [3, 4, 5], [6, 7, -1]])
+final = np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
 
 ## Initial check
 # Verify if dimensions are equal
@@ -38,7 +39,7 @@ for i in range(number_of_elements):
 		print "Elements must be unique and existent in both final and initial states\n(Element " + str(element) + " does not comply this)"
 		exit()
 # Verify if there is an only gap
-if np.sum(initial < 0) != 1:
+if np.sum(initial == 0) != 1:
 	print "There must be an only gap"	
 	exit()
 
@@ -60,7 +61,7 @@ for i in range(2*problem_dimension):
 n_movement = 0
 while not (state == final).all():
 	# Find the gap
-	gap_position_array = np.where(state < 0)
+	gap_position_array = np.where(state == 0)
 	current_gap_index = np.ndarray(shape=(problem_dimension), dtype=int)
 	for i in range(problem_dimension):
 		current_gap_index[i] = gap_position_array[i][0]
@@ -80,17 +81,21 @@ while not (state == final).all():
 			change_element = state_buffer[tuple(desired_gap_index)]
 			state_buffer[tuple(desired_gap_index)] = state_buffer[tuple(current_gap_index)]
 			state_buffer[tuple(current_gap_index)] = change_element
+			#Calculates id
+			identifier = 0
+			for k in range(number_of_elements):
+				identifier = identifier*number_of_elements + state_buffer[tuple(indexes_of_inputs[k,:])]
 			#Avoids identical states
 			found_identical = False
 			for k in range(len(visited)):
-				if (visited[k] == state_buffer).all():
+				if visited[k] == identifier:
 					found_identical = True
 					break
 			if not found_identical:
 				# Insert the state to border and visited
 				history_buffer.append(actions[i,:])
 				border.append((state_buffer, history_buffer))
-				visited.append(state_buffer)
+				visited.append(identifier)
 	# Next state
 	the_next = border.pop(0)
 	state = the_next[0]
