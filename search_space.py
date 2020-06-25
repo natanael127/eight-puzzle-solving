@@ -67,27 +67,30 @@ while not (state == final).all():
 	# Try to apply the actions to get new states
 	for i in range(actions.shape[0]):
 		desired_gap_index = current_gap_index + actions[i,:]
-		for j in range(indexes_of_inputs.shape[0]):
-			# Checks if action is valid
-			if (desired_gap_index == indexes_of_inputs[j,:]).all():
-				# Moves the gap
-				state_buffer = np.copy(state)
-				history_buffer = copy.deepcopy(history)
-				change_element = state_buffer[tuple(desired_gap_index)]
-				state_buffer[tuple(desired_gap_index)] = state_buffer[tuple(current_gap_index)]
-				state_buffer[tuple(current_gap_index)] = change_element
-				#Avoids identical states
-				found_identical = False
-				for k in range(len(visited)):
-					if (visited[k] == state_buffer).all():
-						found_identical = True
-						break
-				if not found_identical:
-					# Insert the state to border and visited
-					history_buffer.append(actions[i,:])
-					border.append((state_buffer, history_buffer))
-					visited.append(state_buffer)
+		valid_index = True;
+		# Checks if action is valid
+		for j in range(problem_dimension):
+			if (desired_gap_index[j] < 0 or desired_gap_index[j] >= initial.shape[j]):
+				valid_index = False
 				break
+		if valid_index:
+			# Moves the gap
+			state_buffer = np.copy(state)
+			history_buffer = copy.deepcopy(history)
+			change_element = state_buffer[tuple(desired_gap_index)]
+			state_buffer[tuple(desired_gap_index)] = state_buffer[tuple(current_gap_index)]
+			state_buffer[tuple(current_gap_index)] = change_element
+			#Avoids identical states
+			found_identical = False
+			for k in range(len(visited)):
+				if (visited[k] == state_buffer).all():
+					found_identical = True
+					break
+			if not found_identical:
+				# Insert the state to border and visited
+				history_buffer.append(actions[i,:])
+				border.append((state_buffer, history_buffer))
+				visited.append(state_buffer)
 	# Next state
 	the_next = border.pop(0)
 	state = the_next[0]
