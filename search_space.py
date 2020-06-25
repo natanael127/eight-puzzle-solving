@@ -6,7 +6,6 @@ import numpy as np
 # Important: the zero will be the gap
 # Numbers must be from 0 to n_elements-1
 initial = np.array([[1, 2, 4], [3, 5, 6], [8, 7, 0]])
-#initial = np.array([[-1, 0, 1], [3, 4, 2], [6, 7, 5]])
 final = np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
 
 ## Initial check
@@ -32,16 +31,11 @@ for i in range(number_of_elements):
 	for j in range(problem_dimension):
 		indexes_of_inputs[i, j] = index_ref % initial.shape[j]
 		index_ref = np.floor(index_ref/ initial.shape[j])
-# Verify if elements are unique
+# Verify if elements are unique and correct
 for i in range(number_of_elements):
-	element = initial[tuple(indexes_of_inputs[i,:])]
-	if np.sum(initial == element) != 1 or np.sum(final == element) != 1:
-		print "Elements must be unique and existent in both final and initial states\n(Element " + str(element) + " does not comply this)"
+	if np.sum(initial == i) != 1 or np.sum(final == i) != 1:
+		print "Elements must be unique (from 0 to " + str(number_of_elements) + ") and existent in both final and initial states"
 		exit()
-# Verify if there is an only gap
-if np.sum(initial == 0) != 1:
-	print "There must be an only gap"	
-	exit()
 
 ## State space search algorithm
 # Initial conditions for search
