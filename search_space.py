@@ -18,7 +18,7 @@ def find_index_of_unique_element(array_of_search, element):
 # Numbers must be from 0 to n_elements-1
 initial = np.array([[3, 7, 5], [1, 0, 6], [2, 4, 8]])
 final = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 0]])
-algorithm = 0
+algorithm = 1
 
 ## Initial check
 # Verify if dimensions are equal
@@ -43,6 +43,10 @@ for i in range(number_of_elements):
 	for j in range(problem_dimension):
 		indexes_of_inputs[i, j] = index_ref % initial.shape[j]
 		index_ref = np.floor(index_ref/ initial.shape[j])
+# Build the element positions array
+element_index_fin = np.ndarray(shape=(number_of_elements, problem_dimension), dtype=int)
+for i in range(number_of_elements):
+	element_index_fin[i,:] = find_index_of_unique_element(final, i)
 # Verify if elements are unique and correct
 for i in range(number_of_elements):
 	if np.sum(initial == i) != 1 or np.sum(final == i) != 1:
@@ -101,8 +105,7 @@ while not (state == final).all():
 					# Rank the state according distance of elements
 					for k in range(number_of_elements):
 						element_index_now = find_index_of_unique_element(state_buffer, k)
-						element_index_fin = find_index_of_unique_element(final, k) #TODO: look-up table
-						rank_sum += np.sum(np.abs(element_index_now-element_index_fin))
+						rank_sum += np.sum(np.abs(element_index_now-element_index_fin[k]))
 				# Insert the state to border and visited
 				history_buffer.append(actions[i,:])
 				border.append((state_buffer, history_buffer, rank_sum))
