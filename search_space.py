@@ -18,7 +18,7 @@ def find_index_of_unique_element(array_of_search, element):
 # Numbers must be from 0 to n_elements-1
 initial = np.array([[3, 7, 5], [1, 0, 6], [2, 4, 8]])
 final = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 0]])
-algorithm = 1
+algorithm = 0
 
 ## Initial check
 # Verify if dimensions are equal
@@ -130,6 +130,6 @@ while not (state == final).all():
 		n_movement = len(history)
 		print "Movements counter: " + str(n_movement) + " - Visited: " + str(len(visited))
 #Prints the solution
-print "Solution found in " + str(time.clock()-timestamp_start) + " seconds (" + str(len(history)) + " steps):"
+print "Solution found in " + str(time.clock()-timestamp_start) + " seconds, visiting " + str(len(visited)) + " states (" + str(len(history)) + " actions):"
 for i in range(len(history)):
 	print history[i]
