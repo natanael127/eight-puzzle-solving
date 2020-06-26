@@ -1,12 +1,24 @@
 # Importing
 import copy
 import numpy as np
+import time
 
+## Modular functions
+# Function that returns the position of an unique element in array form
+def find_index_of_unique_element(array_of_search, element):
+	position_object = np.where(array_of_search == element)
+	position_result = np.ndarray(shape=(array_of_search.ndim), dtype=int)
+	for i in range(array_of_search.ndim):
+		position_result[i] = position_object[i][0]
+	return position_result
+
+### Script
 ## User definitions
 # Important: the zero will be the gap
 # Numbers must be from 0 to n_elements-1
 initial = np.array([[1, 2, 4], [3, 5, 6], [8, 7, 0]])
 final = np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
+algorithm = 0
 
 ## Initial check
 # Verify if dimensions are equal
@@ -52,13 +64,11 @@ for i in range(2*problem_dimension):
 	else:
 		actions[i,int(np.floor(i/2))] = -1
 # Search loop
+timestamp_start = time.clock()
 n_movement = 0
 while not (state == final).all():
 	# Find the gap
-	gap_position_array = np.where(state == 0)
-	current_gap_index = np.ndarray(shape=(problem_dimension), dtype=int)
-	for i in range(problem_dimension):
-		current_gap_index[i] = gap_position_array[i][0]
+	current_gap_index = find_index_of_unique_element(state,0)
 	# Try to apply the actions to get new states
 	for i in range(actions.shape[0]):
 		desired_gap_index = current_gap_index + actions[i,:]
@@ -86,18 +96,40 @@ while not (state == final).all():
 					found_identical = True
 					break
 			if not found_identical:
+				rank_sum = 0
+				if algorithm != 0:
+					# Rank the state according distance of elements
+					for k in range(number_of_elements):
+						element_index_now = find_index_of_unique_element(state_buffer, k)
+						element_index_fin = find_index_of_unique_element(final, k) #TODO: look-up table
+						rank_sum += np.sum(np.abs(element_index_now-element_index_fin))
 				# Insert the state to border and visited
 				history_buffer.append(actions[i,:])
-				border.append((state_buffer, history_buffer))
+				border.append((state_buffer, history_buffer, rank_sum))
 				visited.append(identifier)
 	# Next state
-	the_next = border.pop(0)
+	if algorithm == 0:
+		# Pops from a queue
+		the_next = border.pop(0)
+	else:
+		# Initializes with worst rank
+		the_best_rank = 0
+		for i in range(problem_dimension):
+			the_best_rank += 2*(initial.shape[i] - 1)
+		the_best_rank = the_best_rank * number_of_elements + 1
+		# Finds the best
+		for i in range(len(border)):
+			if the_best_rank > border[i][2]:
+				the_best_rank = border[i][2]
+				the_best_index = i
+		the_next = border.pop(the_best_index)
+	#Updates variables
 	state = the_next[0]
 	history = the_next[1]
 	if len(history) > n_movement:
 		n_movement = len(history)
-		print "Movements counter: " + str(n_movement) + " - Queue size: " + str(len(border))
+		print "Movements counter: " + str(n_movement) + " - Visited: " + str(len(visited))
 #Prints the solution
-print "Solution:"
+print "Solution found with " + str(time.clock()-timestamp_start) + " seconds"
 for i in range(len(history)):
 	print history[i]
