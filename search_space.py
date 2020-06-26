@@ -16,8 +16,8 @@ def find_index_of_unique_element(array_of_search, element):
 ## User definitions
 # Important: the zero will be the gap
 # Numbers must be from 0 to n_elements-1
-initial = np.array([[1, 2, 4], [3, 5, 6], [8, 7, 0]])
-final = np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
+initial = np.array([[3, 7, 5], [1, 0, 6], [2, 4, 8]])
+final = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 0]])
 algorithm = 0
 
 ## Initial check
@@ -130,6 +130,6 @@ while not (state == final).all():
 		n_movement = len(history)
 		print "Movements counter: " + str(n_movement) + " - Visited: " + str(len(visited))
 #Prints the solution
-print "Solution found with " + str(time.clock()-timestamp_start) + " seconds"
+print "Solution found in " + str(time.clock()-timestamp_start) + " seconds (" + str(len(history)) + " steps):"
 for i in range(len(history)):
 	print history[i]
