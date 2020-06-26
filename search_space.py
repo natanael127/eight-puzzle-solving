@@ -18,7 +18,7 @@ def find_index_of_unique_element(array_of_search, element):
 # Numbers must be from 0 to n_elements-1
 initial = np.array([[3, 7, 5], [1, 0, 6], [2, 4, 8]])
 final = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 0]])
-algorithm = 0
+algorithm = 1
 
 ## Initial check
 # Verify if dimensions are equal
@@ -96,7 +96,7 @@ while not (state == final).all():
 					found_identical = True
 					break
 			if not found_identical:
-				rank_sum = 0
+				rank_sum = len(history_buffer)
 				if algorithm != 0:
 					# Rank the state according distance of elements
 					for k in range(number_of_elements):
