@@ -2,6 +2,7 @@
 import copy
 import numpy as np
 import time
+import bisect
 
 ## Modular functions
 # Function that returns the position of an unique element in array form
@@ -57,6 +58,7 @@ for i in range(number_of_elements):
 # Initial conditions for search
 border = []
 visited = []
+rank_list = []
 state = initial
 history = []
 # Build the actions array
@@ -107,15 +109,14 @@ while not (state == final).all():
 					for k in range(number_of_elements):
 						element_index_now = find_index_of_unique_element(state_buffer, k)
 						heuristic_rat += np.sum(np.abs(element_index_now-element_index_fin[k]))
-					for k in range(len(border)):
-						if heuristic_rat < border[k][2]:
-							index_to_insert = k
-							break
+					index_to_insert = bisect.bisect(rank_list, heuristic_rat)
 				# Insert the state to border and visited
 				history_buffer.append(actions[i,:])
-				border.insert(index_to_insert, (state_buffer, history_buffer, heuristic_rat))
+				border.insert(index_to_insert, (state_buffer, history_buffer))
+				rank_list.insert(index_to_insert, heuristic_rat)
 				visited.append(identifier)
 	# Updates variables
+	del rank_list[0]
 	the_next = border.pop(0)
 	state = the_next[0]
 	history = the_next[1]
