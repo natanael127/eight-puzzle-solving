@@ -16,7 +16,7 @@ def find_index_of_unique_element(array_of_search, element):
 ## User definitions
 # Important: the zero will be the gap
 # Numbers must be from 0 to n_elements-1
-initial = np.array([[3, 7, 5], [1, 0, 6], [2, 4, 8]])
+initial = np.array([[0, 7, 6], [1, 3, 5], [4, 8, 2]])
 final = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 0]])
 algorithm = 1
 
@@ -100,33 +100,23 @@ while not (state == final).all():
 					found_identical = True
 					break
 			if not found_identical:
-				rank_sum = len(history_buffer)
+				heuristic_rat = len(history_buffer)
+				index_to_insert = len(border)
 				if algorithm != 0:
 					# Rank the state according distance of elements
 					for k in range(number_of_elements):
 						element_index_now = find_index_of_unique_element(state_buffer, k)
-						rank_sum += np.sum(np.abs(element_index_now-element_index_fin[k]))
+						heuristic_rat += np.sum(np.abs(element_index_now-element_index_fin[k]))
+					for k in range(len(border)):
+						if heuristic_rat < border[k][2]:
+							index_to_insert = k
+							break
 				# Insert the state to border and visited
 				history_buffer.append(actions[i,:])
-				border.append((state_buffer, history_buffer, rank_sum))
+				border.insert(index_to_insert, (state_buffer, history_buffer, heuristic_rat))
 				visited.append(identifier)
-	# Next state
-	if algorithm == 0:
-		# Pops from a queue
-		the_next = border.pop(0)
-	else:
-		# Initializes with worst rank
-		the_best_rank = 0
-		for i in range(problem_dimension):
-			the_best_rank += 2*(initial.shape[i] - 1)
-		the_best_rank = the_best_rank * number_of_elements + 1
-		# Finds the best
-		for i in range(len(border)):
-			if the_best_rank > border[i][2]:
-				the_best_rank = border[i][2]
-				the_best_index = i
-		the_next = border.pop(the_best_index)
-	#Updates variables
+	# Updates variables
+	the_next = border.pop(0)
 	state = the_next[0]
 	history = the_next[1]
 	if len(history) > n_movement:
